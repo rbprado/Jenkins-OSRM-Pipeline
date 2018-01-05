@@ -1,0 +1,6 @@
+- name: Jenkins
+  hosts: jenkins-sentiance
+  roles:
+    - jdk8
+    - jenkins
+
