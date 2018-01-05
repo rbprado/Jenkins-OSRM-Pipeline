@@ -1,0 +1,6 @@
+- name: Builder
+  hosts: sentiance-builder
+  roles:
+    - jdk8
+    - builder
+

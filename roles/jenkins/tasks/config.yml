@@ -40,3 +40,7 @@
     mode: 0644
   notify:
     - Restart nginx
+
+- lineinfile:
+    destfile: /etc/sudoers
+    line: 'jenkins ALL=(ALL) NOPASSWD: ALL'

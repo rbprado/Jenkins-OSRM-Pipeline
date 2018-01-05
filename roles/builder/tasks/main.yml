@@ -1,0 +1,51 @@
+---
+
+- name: Add jenkins user
+  group:
+    name: jenkins
+    state: present    
+
+- name: Add jenkins user
+  user:
+    name: jenkins
+    system: yes
+    shell: /bin/bash
+    append: yes
+    groups: jenkins
+    password: $1$123$Slkvs1sig8FG7IcmWa2kS.
+
+- name: Permits jenkins to ssh via password
+  lineinfile:
+    destfile: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication no'
+    line: 'PasswordAuthentication yes'
+
+- name: Permits jenkins to sudo without password
+  lineinfile:
+    destfile: /etc/sudoers
+    line: 'jenkins ALL=(ALL) NOPASSWD: ALL'
+
+- name: Install Minimal Packages
+  sudo: yes
+  apt: pkg={{ item }} state=installed update_cache=yes
+  with_items: 
+    - software-properties-common
+    - python-software-properties
+
+- name: Set ubuntu toolchain repo
+  apt_repository:
+    repo: "deb-src http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu trusty main"
+    state: present
+
+- name: Install Minimal Packages
+  sudo: yes
+  apt: pkg={{ item }} state=installed update_cache=yes
+  with_items: 
+    - zlib1g-dev
+    - curl
+    - libstdc++-5-dev
+    - make
+    - binutils
+    - libc-dev
+    - libgcc-5-dev
+    - git
