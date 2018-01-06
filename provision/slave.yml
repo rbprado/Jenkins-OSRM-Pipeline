@@ -1,0 +1,6 @@
+- name: Slave
+  hosts: sentiance-slave
+  roles:
+    - jdk8
+    - slave
+

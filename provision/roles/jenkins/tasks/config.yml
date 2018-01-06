@@ -1,0 +1,91 @@
+---
+
+- name: Configure Jenkins Port
+  sudo: yes
+  when: port is defined
+  lineinfile: dest=/etc/default/jenkins regexp=^HTTP_PORT= line=HTTP_PORT={{port}}
+
+- name: Configure Jenkins Prefix
+  sudo: yes
+  when: prefix is defined
+  lineinfile: dest=/etc/default/jenkins regexp=^PREFIX= line=PREFIX={{prefix}}
+
+- name: Configure Jenkins Permissions
+  template:
+    src: jenkins-config.xml
+    dest: /var/lib/jenkins/config.xml
+    owner: jenkins
+    group: jenkins
+    mode: 0600
+  notify:
+    - Restart Jenkins
+
+#- name: "Creating folder for slave config"
+#  file:
+#    path: "/var/lib/jenkins/nodes/slave"
+#    state: directory
+#    mode: 0755
+#    group: root
+#    owner: root
+#
+#- name: Configure Jenkins Slaves
+#  template:
+#    src: jenkins-slave.xml
+#    dest: /var/lib/jenkins/nodes/slave/config.xml
+#    owner: jenkins
+#    group: jenkins
+#    mode: 0600
+#  notify:
+#    - Restart Jenkins
+#
+#- name: Configure Jenkins Credentials
+#  template:
+#    src: jenkins-credentials.xml
+#    dest: /var/lib/jenkins/credentials.xml
+#    owner: jenkins
+#    group: jenkins
+#    mode: 0600
+#  notify:
+#    - Restart Jenkins
+
+- name: "Creating folder for slave config"
+  file:
+    path: "/var/lib/jenkins/jobs/CD_pipeline"
+    state: directory
+    mode: 0755
+    group: root
+    owner: root
+
+- name: Configure Jenkins CD Pipeline for OSRM backend
+  template:
+    src: jenkins-CD_pipeline.xml
+    dest: /var/lib/jenkins/jobs/CD_pipeline/config.xml
+    owner: jenkins
+    group: jenkins
+    mode: 0600
+  notify:
+    - Restart Jenkins
+
+- name: Configure Jenkins E-mail
+  sudo: yes
+  when: email is defined
+  template: src=hudson.tasks.Mailer.xml.j2 dest={{ jenkins_lib }}/hudson.tasks.Mailer.xml owner=jenkins group=jenkins mode=0644
+
+- name: Install nginx
+  sudo: yes
+  apt: pkg={{ item }} state=installed
+  with_items: 
+    - nginx
+
+- name: Configure nginx
+  template:
+    src: nginx.default
+    dest: /etc/nginx/sites-available/default
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Restart nginx
+
+- command: service jenkins restart
+- command: service nginx restart

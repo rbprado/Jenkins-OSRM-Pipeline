@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.16">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.42">
+    <script>node(&apos;builder2&apos;) {
+    stage(&apos;Cleanup&apos;) { 
+        sh &apos;rm -f berlin-latest.osm.pbf*&apos;
+        sh &apos;docker kill $(docker ps -q)&apos;
+    }
+    stage(&apos;Download latest&apos;) { 
+        // seria bom se fosse paralelo ou steps
+        sh &apos;rm -f berlin-latest.osm.pbf*&apos;
+        sh &apos;wget http://download.geofabrik.de/europe/germany/berlin-latest.osm.pbf&apos;
+        sh &apos;docker pull osrm/osrm-backend&apos;
+    }
+    
+    stage(&apos;Prepare Env&apos;) { 
+        // seria balase fosse steps
+        sh &apos;&apos;&apos;
+        docker run  -v $(pwd):/data osrm/osrm-backend osrm-extract -p /opt/car.lua /data/berlin-latest.osm.pbf
+        docker run  -v $(pwd):/data osrm/osrm-backend osrm-partition /data/berlin-latest.osrm
+        docker run  -v $(pwd):/data osrm/osrm-backend osrm-customize /data/berlin-latest.osrm
+        &apos;&apos;&apos;
+    }
+    
+    stage(&apos;Run Backend app&apos;) { 
+        sh &apos;docker run -i -p 5000:5000 -v $(pwd):/data osrm/osrm-backend osrm-routed --algorithm mld /data/berlin-latest.osrm &amp;&apos;
+    }
+    
+    stage(&apos;Test Aplication&apos;) { 
+        timeout(120) {
+    waitUntil {
+        try {
+            sh &quot;curl &apos;http://127.0.0.1:5000/route/v1/driving/13.388860,52.517037;13.385983,52.496891?steps=true&apos;&quot;
+            return true
+        } catch (exception) {
+            return false
+        }
+    }
+}
+    }
+}
+
+</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <quietPeriod>5</quietPeriod>
+  <disabled>false</disabled>
+</flow-definition>

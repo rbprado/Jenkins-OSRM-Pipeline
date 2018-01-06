@@ -1,0 +1,85 @@
+---
+jenkins_dest: /opt/jenkins
+jenkins_lib: /var/lib/jenkins
+plugins:
+  - ace-editor
+  - ant
+  - antisamy-markup-formatter
+  - apache-httpcomponents-client-4-api
+  - authentication-tokens
+  - bouncycastle-api
+  - branch-api
+  - build-timeout
+  - cloudbees-folder
+  - command-launcher
+  - credentials-binding
+  - credentials
+  - display-url-api
+  - docker-commons
+  - docker-workflow
+  - durable-task
+  - email-ext
+  - git-client
+  - git-server
+  - git
+  - github-api
+  - github-branch-source
+  - github
+  - gradle
+  - handlebars
+  - jackson2-api
+  - jquery-detached
+  - jsch
+  - junit
+  - ldap
+  - mailer
+  - mapdb-api
+  - matrix-auth
+  - matrix-project
+  - momentjs
+  - pam-auth
+  - pipeline-build-step
+  - pipeline-github-lib
+  - pipeline-graph-analysis
+  - pipeline-input-step
+  - pipeline-milestone-step
+  - pipeline-model-api
+  - pipeline-model-declarative-agent
+  - pipeline-model-definition
+  - pipeline-model-extensions
+  - pipeline-rest-api
+  - pipeline-stage-step
+  - pipeline-stage-tags-metadata
+  - pipeline-stage-view
+  - plain-credentials
+  - resource-disposer
+  - scm-api
+  - script-security
+  - ssh-credentials
+  - ssh-slaves
+  - structs
+  - subversion
+  - timestamper
+  - token-macro
+  - windows-slaves
+  - workflow-aggregator
+  - workflow-api
+  - workflow-basic-steps
+  - workflow-cps-global-lib
+  - workflow-cps
+  - workflow-durable-task-step
+  - workflow-job
+  - workflow-multibranch
+  - workflow-scm-step
+  - workflow-step-api
+  - workflow-support
+  - ws-cleanup
+
+jenkins:
+  deb:
+    repo: 'deb http://pkg.jenkins-ci.org/debian binary/' # Jenkins repository
+    dependencies: # Jenkins dependencies
+      - 'git'
+      - 'curl'
+  cli_dest: '{{ jenkins_dest }}/jenkins-cli.jar' # Jenkins CLI destination
+  updates_dest: '{{ jenkins_dest }}/updates_jenkins.json' # Jenkins updates file
