@@ -35,7 +35,7 @@ $ vagrant up --provider digital_ocean
 ### To Do:
 
 - Docker build is failing with the following error:
-  "CMake Error: The source directory "/src" does not appear to contain CMakeLists.txt."
+  `CMake Error: The source directory "/src" does not appear to contain CMakeLists.txt.`
   So I am using docker pull to test the application.
 
 - Provision with the node already attached on Jenkins.
