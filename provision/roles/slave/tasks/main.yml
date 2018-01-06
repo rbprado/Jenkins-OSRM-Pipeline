@@ -12,7 +12,7 @@
     shell: /bin/bash
     append: yes
     groups: jenkins
-    password: $1$123$Slkvs1sig8FG7IcmWa2kS.
+    password: "$1$123$Slkvs1sig8FG7IcmWa2kS."
 
 - name: Permits jenkins to ssh via password
   lineinfile:
@@ -20,8 +20,7 @@
     regexp: '^PasswordAuthentication no'
     line: 'PasswordAuthentication yes'
 
-- command: "service sshd restart"
-  sudo: yes
+- service: name=ssh state=restarted
 
 - name: Permits jenkins to sudo without password
   lineinfile:
@@ -104,6 +103,7 @@
     groups: "docker"
   with_items: "{{ docker_users }}"
 
-- debug: "The new slave is avaliable at: {{ansible_default_ipv4['address']}}"
+- debug: 
+    msg: "The new slave is avaliable at: {{ansible_default_ipv4['address']}}"
 
-- debug: "Please create a new node on jenkins with its IP address."
+

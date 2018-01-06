@@ -20,46 +20,18 @@
   notify:
     - Restart Jenkins
 
-#- name: "Creating folder for slave config"
-#  file:
-#    path: "/var/lib/jenkins/nodes/slave"
-#    state: directory
-#    mode: 0755
-#    group: root
-#    owner: root
-#
-#- name: Configure Jenkins Slaves
-#  template:
-#    src: jenkins-slave.xml
-#    dest: /var/lib/jenkins/nodes/slave/config.xml
-#    owner: jenkins
-#    group: jenkins
-#    mode: 0600
-#  notify:
-#    - Restart Jenkins
-#
-#- name: Configure Jenkins Credentials
-#  template:
-#    src: jenkins-credentials.xml
-#    dest: /var/lib/jenkins/credentials.xml
-#    owner: jenkins
-#    group: jenkins
-#    mode: 0600
-#  notify:
-#    - Restart Jenkins
-
 - name: "Creating folder for slave config"
   file:
-    path: "/var/lib/jenkins/jobs/CD_pipeline"
+    path: "/var/lib/jenkins/jobs/CD_Pipeline"
     state: directory
     mode: 0755
-    group: root
-    owner: root
+    group: jenkins
+    owner: jenkins
 
 - name: Configure Jenkins CD Pipeline for OSRM backend
   template:
-    src: jenkins-CD_pipeline.xml
-    dest: /var/lib/jenkins/jobs/CD_pipeline/config.xml
+    src: jenkins-CD_Pipeline.xml
+    dest: /var/lib/jenkins/jobs/CD_Pipeline/config.xml
     owner: jenkins
     group: jenkins
     mode: 0600
@@ -87,5 +59,10 @@
   notify:
     - Restart nginx
 
-- command: service jenkins restart
-- command: service nginx restart
+- lineinfile:
+    destfile: /etc/ssh/ssh_config
+    line: 'StrictHostKeyChecking no'
+
+- service: name=ssh state=restarted
+- service: name=jenkins state=restarted
+- service: name=nginx state=restarted

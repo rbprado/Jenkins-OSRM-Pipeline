@@ -78,7 +78,7 @@ plugins:
 jenkins:
   deb:
     repo: 'deb http://pkg.jenkins-ci.org/debian binary/' # Jenkins repository
-    dependencies: # Jenkins dependencies
+    dependencies:
       - 'git'
       - 'curl'
   cli_dest: '{{ jenkins_dest }}/jenkins-cli.jar' # Jenkins CLI destination

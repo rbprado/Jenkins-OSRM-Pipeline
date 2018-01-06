@@ -19,4 +19,5 @@
 # Install/update Jenkins plugins
 - include: plugins.yml
 
-- debug: "The new jenkins is avaliable at: http://{{ansible_default_ipv4['address']}}"
+- debug: 
+    msg: "The new jenkins is avaliable at: http://{{ansible_default_ipv4['address']}}"
