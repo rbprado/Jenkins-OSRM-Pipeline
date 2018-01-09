@@ -1,0 +1,25 @@
+---
+
+- name: Install required packages
+  sudo: yes
+  apt:
+    pkg: "{{ item }}"
+    state: latest
+    update_cache: yes
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - python-pip
+    - software-properties-common
+
+- name: Install additional packages for Ubuntu 14.04
+  sudo: yes
+  apt:
+    pkg: "{{ item }}"
+    state: latest
+    update_cache: yes
+  with_items:
+    - "linux-image-extra-{{ ansible_kernel }}"
+    - "linux-image-extra-virtual"
+  when: ansible_distribution_version == 14.04

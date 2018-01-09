@@ -1,0 +1,53 @@
+---
+
+- name: Get Docker's repository key
+  shell: /usr/bin/curl https://get.docker.com/gpg | /usr/bin/apt-key --keyring /etc/apt/trusted.gpg.d/docker.gpg add - creates=/etc/apt/trusted.gpg.d/docker.gpg
+
+- name: Add Docker's apt repository
+  sudo: yes
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+
+- name: Upgrade pip
+  sudo: yes
+  pip:
+    name: pip
+    state: latest
+
+- name: super-ugly hack to allow unauthenticated packages to install
+  copy: content='APT::Get::AllowUnauthenticated "true";' dest=/etc/apt/apt.conf.d/99temp owner=root group=root mode=0644
+
+- name: Install docker CE
+  sudo: yes
+  apt:
+    pkg: "docker-ce"
+    state: latest
+    update_cache: yes
+
+- name: remove hack that allows unauthenticated packages to install
+  file: path=/etc/apt/apt.conf.d/99temp state=absent
+
+- name: Uninstall python docker
+  sudo: yes
+  pip:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - docker-py
+    - docker
+
+- name: Install python docker
+  sudo: yes
+  pip:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - docker
+
+- name: Add user to docker group
+  sudo: yes
+  user:
+    name: "{{ item }}"
+    groups: "docker"
+  with_items: "{{ docker_users }}"

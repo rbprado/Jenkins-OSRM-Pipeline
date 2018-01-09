@@ -1,0 +1,28 @@
+---
+
+- name: Add jenkins group
+  group:
+    name: jenkins
+    state: present    
+
+- name: Add jenkins user
+  user:
+    name: jenkins
+    system: yes
+    shell: /bin/bash
+    append: yes
+    groups: jenkins,docker
+    password: "$1$123$Slkvs1sig8FG7IcmWa2kS."
+
+- name: Permits jenkins to ssh via password
+  lineinfile:
+    destfile: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication no'
+    line: 'PasswordAuthentication yes'
+
+- service: name=ssh state=restarted
+
+- name: Permits jenkins to sudo without password
+  lineinfile:
+    destfile: /etc/sudoers
+    line: 'jenkins ALL=(ALL) NOPASSWD: ALL'
