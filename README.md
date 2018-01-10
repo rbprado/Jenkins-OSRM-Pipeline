@@ -60,9 +60,9 @@ $ vagrant up sentiance-slave --provider digital_ocean
 
 ### References:
 - Doc about how to bring up the container with berlin OSRM data:
-https://github.com/Project-OSRM/osrm-backend#using-docker/
-https://hub.docker.com/r/osrm/osrm-backend/
+  - https://github.com/Project-OSRM/osrm-backend#using-docker/
+  - https://hub.docker.com/r/osrm/osrm-backend/
 - Jenkins provision reference:
-https://github.com/balamaci/jenkins-ansible/
+  - https://github.com/balamaci/jenkins-ansible/
 - DockerCE provision reference:
-https://github.com/opichon/ansible-install-docker-ce/
+  - https://github.com/opichon/ansible-install-docker-ce/
