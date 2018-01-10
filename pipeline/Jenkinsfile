@@ -1,19 +1,16 @@
 node('slave') {
     stage('Cleanup') { 
-        sh 'rm -f berlin-latest.osm.pbf*'
         sh 'docker kill $(docker ps -q) || true'
+        cleanWs()
     }
     stage('Download latest') { 
-        // seria bom se fosse paralelo ou steps
         git 'https://github.com/rbprado/Jenkins-OSRM-Pipeline'
-        sh 'rm -f berlin-latest.osm.pbf*'
         sh 'wget http://download.geofabrik.de/europe/germany/berlin-latest.osm.pbf'
         // sh 'docker build .'
         sh 'docker pull osrm/osrm-backend'
     }
     
     stage('Prepare Env') { 
-        // seria balase fosse steps
         sh '''
         docker run  -v $(pwd):/data osrm/osrm-backend osrm-extract -p /opt/car.lua /data/berlin-latest.osm.pbf
         docker run  -v $(pwd):/data osrm/osrm-backend osrm-partition /data/berlin-latest.osrm
@@ -22,22 +19,19 @@ node('slave') {
     }
     
     stage('Run Backend app') { 
-        sh 'docker run -i -p 5000:5000 -v $(pwd):/data osrm/osrm-backend osrm-routed --algorithm mld /data/berlin-latest.osrm &'
+        sh 'docker run -d -i -p 5000:5000 -v $(pwd):/data osrm/osrm-backend osrm-routed --algorithm mld /data/berlin-latest.osrm'
     }
     
     stage('Test Aplication') { 
-        timeout(120) {
-    waitUntil {
-        try {
-            sh "curl 'http://127.0.0.1:5000/route/v1/driving/13.388860,52.517037;13.385983,52.496891?steps=true'"
-            return true
-        } catch (exception) {
-            return false
+        timeout(20) {
+            waitUntil {
+                try {
+                    sh "curl 'http://127.0.0.1:5000/route/v1/driving/13.388860,52.517037;13.385983,52.496891?steps=true'"
+                    return true
+                } catch (exception) {
+                    return false
+                }
+            }
         }
     }
 }
-    }
-    stage('Publish') {
-    }
-}
-

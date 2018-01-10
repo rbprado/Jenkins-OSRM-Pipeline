@@ -25,8 +25,17 @@ This repository stores the following data:
 
 ### Bringing up the environment:
 
-$ cd provision
+You will need an account on Digital Ocean (https://cloud.digitalocean.com/) with an access token and a registered ssh key.
+On the `provision/` folder, run the following command to bring up the Jenkins server with a slave:
+```
 $ vagrant up --provider digital_ocean
+```
+
+If you want to provision the VMs separately run:
+```
+$ vagrant up sentiance-jenkins --provider digital_ocean
+$ vagrant up sentiance-slave --provider digital_ocean
+```
 
 - On your browser access the Jenkins IP shown on the end of the `sentiance-jenkins` provision.
 - On the Jenkins web interface create a slave node, with:
@@ -42,10 +51,18 @@ $ vagrant up --provider digital_ocean
 - Docker build is failing with the following error:
   `CMake Error: The source directory "/src" does not appear to contain CMakeLists.txt.`
   So I am using docker pull to test the application.
-- Add nohup/DontKillMe to dont kill the container.
+- Reduce the downtime of the application by just killing the older container when the newone is already done.
 - Publish a final link for the application running (same link of the curl executed)
 - Provision with the node already attached on Jenkins.
 - Provision with valid credentials already configured.
 - Configure iptables on the VMs.
 - Configure reverse proxy for https.
 
+### References:
+- Doc about how to bring up the container with berlin OSRM data:
+https://github.com/Project-OSRM/osrm-backend#using-docker/
+https://hub.docker.com/r/osrm/osrm-backend/
+- Jenkins provision reference:
+https://github.com/balamaci/jenkins-ansible/
+- DockerCE provision reference:
+https://github.com/opichon/ansible-install-docker-ce/
