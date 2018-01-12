@@ -1,4 +1,4 @@
-node('slave') {
+node() {
     stage('Cleanup') { 
         sh 'docker kill $(docker ps -q) || true'
         cleanWs()

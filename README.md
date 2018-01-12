@@ -26,25 +26,17 @@ This repository stores the following data:
 ### Bringing up the environment:
 
 You will need an account on Digital Ocean (https://cloud.digitalocean.com/) with an access token and a registered ssh key.
-On the `provision/` folder, run the following command to bring up the Jenkins server with a slave:
+- On the `provision/` folder, run the following command to bring up the Jenkins server with a slave:
 ```
 $ vagrant up --provider digital_ocean
 ```
-
-If you want to provision the VMs separately run:
-```
-$ vagrant up sentiance-jenkins --provider digital_ocean
-$ vagrant up sentiance-slave --provider digital_ocean
-```
-
-- On your browser access the Jenkins IP shown on the end of the `sentiance-jenkins` provision.
-- On the Jenkins web interface create a slave node, with:
-  - name `slave`
-  - workspace `/home/jenkins`
+- On your browser access the Jenkins IP shown on the end of the `jenkins` provision.
+- On the Jenkins web interface create the slaves nodes, with:
+  - name `slave-1` or `slave-2`:
+  - workspace `/home/jenkins/`
   - launch method `via SSH`
-  - with the IP shown on the end of the provision of `sentiance-slave`
+  - with the IP shown on the end of the provision of `slave`
   - Set this slave to use jenkins/jenkins credentials and the `Host Key Verification Strategy` with `non verifying`
-
 
 ### To Do:
 

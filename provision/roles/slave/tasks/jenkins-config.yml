@@ -11,7 +11,7 @@
     system: yes
     shell: /bin/bash
     append: yes
-    groups: jenkins,docker
+    groups: jenkins
     password: "$1$123$Slkvs1sig8FG7IcmWa2kS."
 
 - name: Permits jenkins to ssh via password

@@ -1,5 +1,5 @@
 - name: Jenkins
-  hosts: sentiance-jenkins
+  hosts: jenkins
   roles:
     - jdk8
     - jenkins

@@ -1,0 +1,51 @@
+---
+
+# Command to call this playbook:
+# ansible-playbook digitalocean.yml -e "do_key_name='${DO_KEY_NAME}'" -e "do_token='${DO_TOKEN}'"
+
+- hosts: digitalocean
+
+  vars:
+    slaves:
+    - slave-1
+    - slave-2
+    jenkins:
+    - jenkins
+
+  tasks:
+
+  - name: Ensure ssh key exists
+    user:
+      name: "{{ ansible_user_id }}"
+      generate_ssh_key: yes
+      ssh_key_file: ".ssh/id_rsa"
+
+  - debug: msg="{{do_key_name}}"
+
+  - name: Ensure key exists at digitalocean
+    digital_ocean:
+      state: present
+      command: ssh
+      name: "{{ do_key_name }}"
+      ssh_pub_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+      api_token: "{{ do_token }}"
+    register: do_key
+
+  - name: ensure droplets exist
+    digital_ocean:
+      state: present
+      command: droplet
+      name: "{{ item }}"
+      unique_name: yes
+      size_id: 512mb
+      region_id: sgp1
+      image_id: ubuntu-14-04-x64
+      ssh_key_ids: "{{ do_key.ssh_key.id }}"
+      api_token: "{{ do_token }}"
+    with_items: slaves
+    register: slaves_details
+
+
+  - debug: 
+      msg: "IP is {{ item.droplet.ip_address }}"
+    with_items: slaves_details.results

@@ -2,11 +2,9 @@
 
 - include: packages.yml
 
-- include: docker-config.yml
-
 - include: jenkins-config.yml
+
+- include: docker-config.yml
 
 - debug: 
     msg: "The new slave is avaliable at: {{ansible_default_ipv4['address']}}"
-
-
